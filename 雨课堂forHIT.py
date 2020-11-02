@@ -14,12 +14,7 @@ selenium chrome驱动 镜像地址: http://npm.taobao.org/mirrors/selenium
 import os
 import re
 
-"""
-下一步目标：
-1.增加多线程播放功能
-2.提高稳定性和健壮性
-3.倍速播放未完善
-"""
+
 import platform
 import json
 from selenium.webdriver.chrome.options import Options
@@ -35,12 +30,12 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 
 class AutoYuketangforHIT:
-    home_url = 'https://hit.yuketang.cn/pro/portal/home/'
+    home_url = 'https://yuketang.cn/'  # 改成自己学校的，cookie.json也改成自己学校的
     course_url = ""
     courseID=""
     def __init__(self, mode):
 
-        isCookieMode = False
+        isCookieMode = True
         if "CookieMode" in mode:
             isCookieMode = True
 
@@ -89,66 +84,36 @@ class AutoYuketangforHIT:
         print(url)
         self.load_and_wait_url(url)  # 切换到新的窗口
 
-        title = self.wait_and_getText("/html/body/div[4]/div[2]/div[2]/div[3]/div/div[1]/div/div[2]/span")
-        print("正在播放:" + title)
+
 
         try:
             work_persent = self.wait_and_getText(
-                '/html/body/div[4]/div[2]/div[2]/div[3]/div/div[2]/div/section[1]/div[2]/div/div/span')
+                '//*[@id="app"]/div[2]/div[2]/div[3]/div/div[2]/div/div/section[1]/div[2]/div/div/span')
         except TimeoutException:
             work_persent = "任务进度元素加载失败"  # 元素加载失败
-
-        print("任务进度：" + work_persent)
-        time.sleep(0.5)
-
-        """该小节播放完成/不需要播放"""
-        if "100%" in work_persent:
+        if work_persent == '完成度：100%':
             return
+        print(work_persent)
+        time.sleep(3)
+        print('播放1')
+        # js1 = 'document.querySelector("#video-box > div > xt-wrap > xt-controls > xt-inner > xt-playbutton").click();'
+        # self.driver.execute_script(js1)
+        self.driver.find_element_by_xpath('/html/body/div[4]/div[2]/div[2]/div[3]/div/div[2]/div/div/section[2]/div[1]/div/div/div/xt-wrap/xt-controls/xt-inner/xt-playbutton').click()
+        print('播放2')
+        time.sleep(2)
+        toTime = self.driver.find_element_by_xpath('/html/body/div[4]/div[2]/div[2]/div[3]/div/div[2]/div/div/section[2]/div[1]/div/div/div/xt-wrap/xt-controls/xt-inner/xt-time/span[2]').get_attribute('textContent')
+        time.sleep(1)
+        while 1:
+            curTime = self.driver.find_element_by_xpath('/html/body/div[4]/div[2]/div[2]/div[3]/div/div[2]/div/div/section[2]/div[1]/div/div/div/xt-wrap/xt-controls/xt-inner/xt-time/span[1]').get_attribute('textContent')
+            print(toTime[3:5], curTime[3:5])
+            if toTime[3:5] == curTime[3:5]:
+                toTime = '00:00:00'
+                curTime = '00:11:00'
+                return
+            else:
+                time.sleep(5)
 
-        """"需要播放视频的情况"""
-        self.wait_and_getText(
-            "/html/body/div[4]/div[2]/div[2]/div[3]/div/div[2]/div/section[2]/div[1]/div/div/div/xt-wrap/xt-controls/xt-inner/xt-time/span[2]")
-        """开始播放"""
-        button = WebDriverWait(self.driver, 10, poll_frequency=2).until(ec.element_to_be_clickable(
-            (By.XPATH, '//*[@id="video-box"]/div/xt-wrap/xt-controls/xt-inner/xt-playbutton')))
 
-        """设置2倍速度"""
-        if button:
-            speed_button = WebDriverWait(self.driver, 10, poll_frequency=1).until(
-                ec.presence_of_element_located((By.XPATH,
-                                                '//*[@id="video-box"]/div/xt-wrap/xt-controls/xt-inner/xt-speedbutton/xt-speedvalue')))
-            speed_2 = self.driver.find_element_by_xpath(
-                '//*[@id="video-box"]/div/xt-wrap/xt-controls/xt-inner/xt-speedbutton/xt-speedlist/ul/li[1]')
-            ac(self.driver).move_to_element(speed_button).perform()
-            time.sleep(1)
-            speed_2.click()
-            button.click()
-
-            cur_time = self.driver.find_element_by_xpath(
-                '//*[@id="video-box"]/div/xt-wrap/xt-controls/xt-inner/xt-time/span[1]').text.split(':')
-            full_time = self.driver.find_element_by_xpath(
-                '//*[@id="video-box"]/div/xt-wrap/xt-controls/xt-inner/xt-time/span[2]').text.split(':')
-            cur = (int(cur_time[1]) * 60 + int(cur_time[2]))
-            ful = (int(full_time[1]) * 60 + int(full_time[2]))
-            self.wait_video(cur, ful)
-            time.sleep(5)
-
-        return
-
-    def wait_video(self, cur, ful):
-        """
-        等待视频播放完成
-        :param cur: 当前时间
-        :param ful: 总时间
-        :return:
-        """
-        count = cur
-        while cur < ful:
-            time.sleep(1)
-            cur = cur + 1
-            print("当前时间：" + str(cur) + "总时间" + str(ful))
-
-        return
 
     def prepare_list(self, location):
         """
