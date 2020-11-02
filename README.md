@@ -1,4 +1,10 @@
-GitHub地址：[https://github.com/xrervip/AutoYuketangforHIT](https://github.com/xrervip/AutoYuketangforHIT)
+原版GitHub地址：[https://github.com/xrervip/AutoYuketangforHIT](https://github.com/xrervip/AutoYuketangforHIT)
+相对于原版，此版本变更如下
+1 只能cookie登录
+2 移除2倍速
+3 修改了雨课堂对应的变更，使得现在（2020年11月）能正常使用
+4 以后更新看心情
+
 
 
 代码基于 [https://github.com/lingyan12/yuketang](https://github.com/lingyan12/yuketang) 和[https://github.com/xrervip/HIT_auto_report/blob/master/HIT_auto_report.py](https://github.com/xrervip/HIT_auto_report/blob/master/HIT_auto_report.py) 进行修改
@@ -13,37 +19,37 @@ GitHub地址：[https://github.com/xrervip/AutoYuketangforHIT](https://github.co
  5. 启动python脚本 
  6. 备注：使用参数 CookieMode 可以在**附录3**`cookie.json` 写入cookie并进行快捷登录（非必须）
 
-**下一步目标：**
 
-1.增加多线程播放功能
-2.提高稳定性和健壮性
-3.倍速播放未完善
+此版本的使用方法
+1 正常登录获取cookie（看下面）并且修改cookie.json文件
+2 修改config.json文件，把自己课程的url填进去
+3 运行python
+4 耐心等待所有的课程url被获取（如果没有全部获取，要从头开始）
+5 开始播放
+6 如果接着上次的刷，cookie可能有变动，重新改cookie.json文件（建议直接丢服务器上挂机，中间别断）
 
 ---
-## 附录1：网页页面
+~~## 附录1：网页页面
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200925164844953.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0ZyYW5rbGluc19GYW4=,size_16,color_FFFFFF,t_70#pic_center)
-  
 
+移除了扫码登录，只能cookie登录
 
 
 ---
 ## 附录2：config.json
 在URL中替换为雨课堂（学堂在线）对应课程的链接即可
 **config.json**
-
+把 ~~https://hit.yuketang.cn/pro/lms/8692P78g7Lk/4412088/score~~ 改成自己的课程
 ```c
 [{
 	"URL":"https://hit.yuketang.cn/pro/lms/8692P78g7Lk/4412088/score"
 }]
 ```
 
-
-说明：启动使用参数 `CookieMode` 可以在cookie，json 写入cookie并进行快捷登录
-
 ---
 ## 附录3：cookie.json
-以下内容非必须，一般用户通过扫码登录即可
-
+以下内容必须
+把 hit.yuketang.cn 改成自己的学校的网站
 
 **cookie.json:**
 
